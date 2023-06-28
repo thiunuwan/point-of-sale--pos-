@@ -1,14 +1,18 @@
 package com.thiunuwan.pointofsale.service.impl;
 
+import com.thiunuwan.pointofsale.dto.paginated.PaginatedResponseItemDTO;
 import com.thiunuwan.pointofsale.dto.request.ItemSaveRequestDTO;
 import com.thiunuwan.pointofsale.dto.response.ItemGetResponseDTO;
 import com.thiunuwan.pointofsale.entity.Item;
+import com.thiunuwan.pointofsale.exception.NotFoundException;
 import com.thiunuwan.pointofsale.repository.ItemRepository;
 import com.thiunuwan.pointofsale.service.ItemService;
 import com.thiunuwan.pointofsale.util.mappers.ItemMapper;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +28,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Autowired
     private ItemMapper itemMapper;
+
+
 
     @Override
     public String saveItem(ItemSaveRequestDTO itemDTO) {
@@ -71,4 +77,18 @@ public class ItemServiceImpl implements ItemService {
             throw new RuntimeException("error");
         }
     }
+
+    @Override
+    public PaginatedResponseItemDTO getAllItemsByActiveStatus(boolean activeStatus, int page, int size) {
+        Page<Item> itemPage =itemRepository.findAllByActiveEquals(activeStatus, PageRequest.of(page, size));
+       if(itemPage.getSize()<1){
+           throw new NotFoundException("No data");
+       }
+        PaginatedResponseItemDTO paginatedResponseItemDTO = new PaginatedResponseItemDTO(
+                itemMapper.entityPageToResponseDTOList(itemPage),itemPage.getSize()
+        );
+        return paginatedResponseItemDTO;
+    }
+
+
 }

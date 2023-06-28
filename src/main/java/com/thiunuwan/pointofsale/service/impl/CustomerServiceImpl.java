@@ -3,6 +3,7 @@ package com.thiunuwan.pointofsale.service.impl;
 import com.thiunuwan.pointofsale.dto.CustomerDTO;
 import com.thiunuwan.pointofsale.dto.request.CustomerUpdateDTO;
 import com.thiunuwan.pointofsale.entity.Customer;
+import com.thiunuwan.pointofsale.exception.NotFoundException;
 import com.thiunuwan.pointofsale.repository.CustomerRepository;
 import com.thiunuwan.pointofsale.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,13 +55,21 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public List<CustomerDTO> getAllCustomers() {
         List<Customer> customerList = customerRepository.findAll();
-        List<CustomerDTO> customerDTOList =new ArrayList<>();
 
-        for (Customer customer:customerList) {
-            customerDTOList.add(new CustomerDTO());
+        if(customerList.size()>0){
+            List<CustomerDTO> customerDTOList =new ArrayList<>();
+
+            for (Customer customer:customerList) {
+                customerDTOList.add(new CustomerDTO());
+            }
+
+            return customerDTOList ;
+
+        } else {
+            throw new NotFoundException("No Customers Found");
         }
 
-        return customerDTOList ;
+
     }
 
     @Override

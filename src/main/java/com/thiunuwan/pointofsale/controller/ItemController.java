@@ -1,6 +1,7 @@
 package com.thiunuwan.pointofsale.controller;
 
 
+import com.thiunuwan.pointofsale.dto.paginated.PaginatedResponseItemDTO;
 import com.thiunuwan.pointofsale.dto.request.ItemSaveRequestDTO;
 import com.thiunuwan.pointofsale.dto.response.ItemGetResponseDTO;
 import com.thiunuwan.pointofsale.service.ItemService;
@@ -47,6 +48,14 @@ public class ItemController {
     public List<ItemGetResponseDTO> getActiveItemByNameUsingMapStruct(@RequestParam String name){
 
         return itemService.getItemByNameAndStatusUsingMapStruct(name);
+    }
+
+ @GetMapping(value = "/get-all-items-by-status",params ={"activeStatus","page","size"})
+    public ResponseEntity<StandardResponse> getAllItemsByActiveStatus(@RequestParam(value ="activeStatus") boolean activeStatus ,@RequestParam int page,@RequestParam int size){
+
+       PaginatedResponseItemDTO paginatedResponseItemDTO = itemService.getAllItemsByActiveStatus(activeStatus,page,size);
+
+       return new ResponseEntity<StandardResponse>(new StandardResponse(201,"Scuess",paginatedResponseItemDTO),HttpStatus.OK);
     }
 
 
